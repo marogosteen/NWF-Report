@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"example.com/osunnwf.report/app/models"
-	// "example.com/osunnwf.report/services"
+	"github.com/nwf-report/app/models"
+	"github.com/nwf-report/services"
 )
 
 var (
@@ -20,6 +20,9 @@ type sample struct {
 }
 
 func StartWebServer() error {
+	// TODO
+	services.Hoge()
+
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
@@ -63,9 +66,10 @@ func addViewHandler(c *gin.Context) {
 }
 
 func addFormReadHandler(c *gin.Context) {
+
 	// TODO formのnil対処
-	model := models.NewReportAddModel(c)
-	service := model.ConvertToService()
-	service.InsertReport()
+	// model := models.NewReportAddModel(c)
+	// service := model.ConvertToService()
+	// service.InsertReport()
 	// TODO ListViewにRedirect
 }

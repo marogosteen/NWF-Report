@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"example.com/osunnwf.report/app/controllers"
+	"github.com/nwf-report/app/controllers"
 )
 
 func main() {

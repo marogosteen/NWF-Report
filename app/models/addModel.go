@@ -7,8 +7,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-
-	"example.com/osunnwf.report/services"
 )
 
 type ReportAddModel struct {
@@ -43,16 +41,16 @@ func NewReportAddModel(c *gin.Context) *ReportAddModel {
 	return &model
 }
 
-func (m *ReportAddModel) ConvertToService() services.CreateService {
-	service := services.CreateService{
-		Title:     m.Title,
-		BestEpoch: m.BestEpoch,
-		BestLoss:  m.BestLoss,
-		Observed:  m.Observed,
-		Predicted: m.Predicted,
-	}
-	return service
-}
+// func (m *ReportAddModel) ConvertToService() services.CreateService {
+// 	service := services.CreateService{
+// 		Title:     m.Title,
+// 		BestEpoch: m.BestEpoch,
+// 		BestLoss:  m.BestLoss,
+// 		Observed:  m.Observed,
+// 		Predicted: m.Predicted,
+// 	}
+// 	return service
+// }
 
 func readFormFile(c *gin.Context, formKey string) []float64 {
 	file, fileHeader, err := c.Request.FormFile(formKey)
