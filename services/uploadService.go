@@ -12,7 +12,10 @@ import (
 	"github.com/nwf-report/config"
 )
 
+
+
 func Hoge() {
+	log.Fatalln("hoge")
 	cfg := config.Config
 	accountName := cfg.Account
 	accountKey := cfg.Key

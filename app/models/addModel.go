@@ -7,9 +7,10 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nwf-report/services"
 )
 
-type ReportAddModel struct {
+type UploadModel struct {
 	Title     string
 	BestEpoch int
 	BestLoss  float64
@@ -17,7 +18,7 @@ type ReportAddModel struct {
 	Predicted []float64
 }
 
-func NewReportAddModel(c *gin.Context) *ReportAddModel {
+func NewUploadModel(c *gin.Context) *UploadModel {
 	bestEpoch, err := strconv.Atoi(c.PostForm("bestepoch"))
 	if err != nil {
 		// TODO 　log.Fatal()使わずに、errorはViewに返す
@@ -30,7 +31,7 @@ func NewReportAddModel(c *gin.Context) *ReportAddModel {
 	observed := readFormFile(c, "observed")
 	predicted := readFormFile(c, "predicted")
 
-	model := ReportAddModel{
+	model := UploadModel{
 		Title:     c.PostForm("reporttitle"),
 		BestEpoch: bestEpoch,
 		BestLoss:  bestLoss,
@@ -41,16 +42,13 @@ func NewReportAddModel(c *gin.Context) *ReportAddModel {
 	return &model
 }
 
-// func (m *ReportAddModel) ConvertToService() services.CreateService {
-// 	service := services.CreateService{
-// 		Title:     m.Title,
-// 		BestEpoch: m.BestEpoch,
-// 		BestLoss:  m.BestLoss,
-// 		Observed:  m.Observed,
-// 		Predicted: m.Predicted,
-// 	}
-// 	return service
-// }
+func (m *UploadModel) ConvertToService(s *services.UploadService) {
+	s.Title = m.Title
+	s.BestEpoch = m.BestEpoch
+	s.BestLoss = m.BestLoss
+	s.Observed = m.Observed
+	s.Predicted = m.Predicted
+}
 
 func readFormFile(c *gin.Context, formKey string) []float64 {
 	file, fileHeader, err := c.Request.FormFile(formKey)
