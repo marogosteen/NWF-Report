@@ -19,14 +19,19 @@ func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
+
 	router.GET("/", homeHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
+
 	err := router.Run(":" + port)
+
 	return err
 }
 
 func homeHandler(c *gin.Context) {
+	var s services.BlobFetchService
+	s.FetchBlobList()
 	m := sample{title: "OK!"}
 	elem := reflect.ValueOf(&m).Elem()
 	size := elem.NumField()
@@ -64,5 +69,5 @@ func uploadPostHandler(c *gin.Context) {
 	var s services.UploadService
 	m.ConvertToService(&s)
 	s.Upload()
-	c.Redirect(http.StatusFound, "/")
+	c.Redirect(http.StatusFound, "/upload")
 }

@@ -7,17 +7,19 @@ import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
 )
 
-type BlobListService struct {
+type BlobFetchService struct {
 	ReportBlob [][]byte
 }
 
-func (b *BlobListService) GetBlobList() {
+func (b *BlobFetchService) FetchBlobList() {
 	// List the container that we have created above
 	fmt.Println("Listing the blobs in the container:")
 	for marker := (azblob.Marker{}); marker.NotDone(); {
 		// Get a result segment starting with the blob indicated by the current Marker.
 		listBlob, err := containerURL.ListBlobsFlatSegment(ctx, marker, azblob.ListBlobsSegmentOptions{})
-		log.Fatalln(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		// ListBlobs returns the start of the next segment; you MUST use this to get
 		// the next segment (after processing the current result segment).
