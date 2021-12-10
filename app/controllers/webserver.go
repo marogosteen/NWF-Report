@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"reflect"
 
@@ -10,34 +11,25 @@ import (
 	"github.com/nwf-report/services"
 )
 
-var (
-	port   = "8080"
-	router = gin.Default()
-)
-
 type sample struct {
 	title string
 }
 
-func StartWebServer() error {
-	// TODO
-	services.Hoge()
-
+func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
-	router.GET("/", homeViewHandler)
-	router.GET("/admin", adminViewHandler)
-	router.GET("/add", addViewHandler)
-	router.POST("/add", addFormReadHandler)
-	// TODO configを扱ったPortのセット
+	router.GET("/", homeHandler)
+	router.GET("/admin", adminHandler)
+	router.GET("/upload", uploadHandler)
+	router.POST("/upload", uploadPostHandler)
 	err := router.Run(":" + port)
 	return err
 }
 
-func homeViewHandler(c *gin.Context) {
-	model := sample{title: "OK!"}
-	elem := reflect.ValueOf(&model).Elem()
+func homeHandler(c *gin.Context) {
+	m := sample{title: "OK!"}
+	elem := reflect.ValueOf(&m).Elem()
 	size := elem.NumField()
 	viewInterface := gin.H{}
 	for i := 0; i < size; i++ {
@@ -48,13 +40,13 @@ func homeViewHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", viewInterface)
 }
 
-func adminViewHandler(c *gin.Context) {
+func adminHandler(c *gin.Context) {
 	// TODO CaseのListView
 }
 
-func addViewHandler(c *gin.Context) {
-	model := models.ReportAddModel{}
-	elem := reflect.ValueOf(&model).Elem()
+func uploadHandler(c *gin.Context) {
+	m := models.UploadModel{}
+	elem := reflect.ValueOf(&m).Elem()
 	size := elem.NumField()
 	viewInterface := gin.H{}
 	for i := 0; i < size; i++ {
@@ -62,14 +54,20 @@ func addViewHandler(c *gin.Context) {
 		value := elem.Field(i)
 		viewInterface[field] = value
 	}
-	c.HTML(http.StatusOK, "add.html", viewInterface)
+	c.HTML(http.StatusOK, "upload.html", viewInterface)
 }
 
-func addFormReadHandler(c *gin.Context) {
+func uploadPostHandler(c *gin.Context) {
+	// TODO formのnil対処 viewで
+	var maxContentLenght int64 = 1024 * 1024
+	if c.Request.ContentLength > maxContentLenght {
+		// TODO Viewに返す
+		log.Fatalln("ContextLengthがmaxContentLenghtより大きい。")
+	}
 
-	// TODO formのnil対処
-	// model := models.NewReportAddModel(c)
-	// service := model.ConvertToService()
-	// service.InsertReport()
-	// TODO ListViewにRedirect
+	m := models.NewUploadModel(c)
+	var s services.UploadService
+	m.ConvertToService(&s)
+	s.SampleUpload()
+	c.Redirect(http.StatusFound, "/")
 }

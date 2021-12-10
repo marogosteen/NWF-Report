@@ -7,6 +7,7 @@ import (
 )
 
 type ConfigList struct {
+	Port             string
 	Account          string
 	Key              string
 	ConnectionString string
@@ -20,8 +21,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	websection := cfg.Section("web")
 	blobsection := cfg.Section("azureblob")
 	Config = ConfigList{
+		Port:             websection.Key("port").String(),
 		Account:          blobsection.Key("Account").String(),
 		Key:              blobsection.Key("Key").String(),
 		ConnectionString: blobsection.Key("ConnectionString").String(),
