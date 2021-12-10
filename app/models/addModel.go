@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"log"
 	"strconv"
 
@@ -44,11 +45,12 @@ func NewUploadModel(c *gin.Context) *UploadModel {
 }
 
 func (m *UploadModel) ConvertToService(s *services.UploadService) {
-	s.Title = m.Title
-	s.BestEpoch = m.BestEpoch
-	s.BestLoss = m.BestLoss
-	s.Observed = m.Observed
-	s.Predicted = m.Predicted
+	b, err := json.Marshal(s)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	s.FileName = m.Title + ".json"
+	s.ResultBlob = b
 }
 
 func readFormFile(c *gin.Context, formKey string) [][]float64 {

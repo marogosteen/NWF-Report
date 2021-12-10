@@ -20,7 +20,6 @@ func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
 	router.GET("/", homeHandler)
-	router.GET("/admin", adminHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
 	err := router.Run(":" + port)
@@ -38,10 +37,6 @@ func homeHandler(c *gin.Context) {
 		viewInterface[field] = value
 	}
 	c.HTML(http.StatusOK, "index.html", viewInterface)
-}
-
-func adminHandler(c *gin.Context) {
-	// TODO CaseのListView
 }
 
 func uploadHandler(c *gin.Context) {
