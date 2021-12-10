@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
 
@@ -67,4 +68,24 @@ func (s *UploadService) Upload() {
 			Parallelism: 16,
 		},
 	)
+}
+
+func (s *UploadService) SampleUpload() {
+	b, err := json.Marshal(s)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var i map[string]interface{}
+	err = json.Unmarshal(b, &i)
+	if err!= nil {
+		log.Fatalln(err)
+	}
+
+	fileName := s.Title + ".json"
+	file, err := os.Create(fileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	json.NewEncoder(file).Encode(i)
 }

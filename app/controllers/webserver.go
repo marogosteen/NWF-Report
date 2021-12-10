@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"reflect"
 
@@ -10,16 +11,11 @@ import (
 	"github.com/nwf-report/services"
 )
 
-var (
-	port   = "8080"
-	router = gin.Default()
-)
-
 type sample struct {
 	title string
 }
 
-func StartWebServer() error {
+func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
@@ -27,7 +23,6 @@ func StartWebServer() error {
 	router.GET("/admin", adminHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
-	// TODO configを扱ったPortのセット
 	err := router.Run(":" + port)
 	return err
 }
@@ -63,10 +58,16 @@ func uploadHandler(c *gin.Context) {
 }
 
 func uploadPostHandler(c *gin.Context) {
-	// TODO formのnil対処 csvのFileSizeの規制
+	// TODO formのnil対処 viewで
+	var maxContentLenght int64 = 1024 * 1024
+	if c.Request.ContentLength > maxContentLenght {
+		// TODO Viewに返す
+		log.Fatalln("ContextLengthがmaxContentLenghtより大きい。")
+	}
+
 	m := models.NewUploadModel(c)
 	var s services.UploadService
 	m.ConvertToService(&s)
-	s.Upload()
-	// TODO ListViewにRedirect
+	s.SampleUpload()
+	c.Redirect(http.StatusFound, "/")
 }

@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/nwf-report/services"
 )
 
@@ -71,9 +72,9 @@ func readFormFile(c *gin.Context, formKey string) [][]float64 {
 			if err != nil {
 				log.Fatalln(err)
 			}
-
 			floatline = append(floatline, floatv)
 		}
+
 		dataArray = append(dataArray, floatline)
 	}
 
