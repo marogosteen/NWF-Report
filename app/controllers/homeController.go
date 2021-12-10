@@ -63,6 +63,6 @@ func uploadPostHandler(c *gin.Context) {
 	m := models.NewUploadModel(c)
 	var s services.UploadService
 	m.ConvertToService(&s)
-	s.SampleUpload()
+	s.Upload()
 	c.Redirect(http.StatusFound, "/")
 }

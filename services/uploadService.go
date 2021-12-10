@@ -6,20 +6,18 @@ import (
 	"os"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
-
-	"github.com/nwf-report/repositories"
 )
 
 type UploadService struct {
 	FileName   string
-	ResultBlob []byte
+	ReportBlob []byte
 }
 
 func (s *UploadService) Upload() {
-	blobURL := repositories.ContainerURL.NewBlockBlobURL(s.FileName)
+	blobURL := containerURL.NewBlockBlobURL(s.FileName)
 	azblob.UploadBufferToBlockBlob(
-		repositories.Ctx,
-		s.ResultBlob,
+		ctx,
+		s.ReportBlob,
 		blobURL,
 		azblob.UploadToBlockBlobOptions{
 			BlockSize:   4 * 1024 * 1024,
@@ -30,7 +28,7 @@ func (s *UploadService) Upload() {
 
 func (s *UploadService) SampleUpload() {
 	var i map[string]interface{}
-	err := json.Unmarshal(s.ResultBlob, &i)
+	err := json.Unmarshal(s.ReportBlob, &i)
 	if err != nil {
 		log.Fatalln(err)
 	}

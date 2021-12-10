@@ -8,15 +8,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/nwf-report/app/models/partModel"
 	"github.com/nwf-report/services"
 )
 
 type UploadModel struct {
-	Title     string
-	BestEpoch int
-	BestLoss  float64
-	Observed  [][]float64
-	Predicted [][]float64
+	ReportModel partModels.ReportModel
 }
 
 func NewUploadModel(c *gin.Context) *UploadModel {
@@ -34,11 +31,13 @@ func NewUploadModel(c *gin.Context) *UploadModel {
 	predicted := readFormFile(c, "predicted")
 
 	model := UploadModel{
-		Title:     c.PostForm("reporttitle"),
-		BestEpoch: bestEpoch,
-		BestLoss:  bestLoss,
-		Observed:  observed,
-		Predicted: predicted,
+		ReportModel: partModels.ReportModel{
+			Title:     c.PostForm("reporttitle"),
+			BestEpoch: bestEpoch,
+			BestLoss:  bestLoss,
+			Observed:  observed,
+			Predicted: predicted,
+		},
 	}
 
 	return &model
@@ -49,8 +48,8 @@ func (m *UploadModel) ConvertToService(s *services.UploadService) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	s.FileName = m.Title + ".json"
-	s.ResultBlob = b
+	s.FileName = m.ReportModel.Title + ".json"
+	s.ReportBlob = b
 }
 
 func readFormFile(c *gin.Context, formKey string) [][]float64 {

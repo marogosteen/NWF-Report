@@ -1,4 +1,4 @@
-package repositories
+package services
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	Ctx          context.Context
-	ContainerURL azblob.ContainerURL
+	ctx          context.Context
+	containerURL azblob.ContainerURL
 )
 
 func init() {
@@ -35,8 +35,8 @@ func init() {
 
 	// Create a ContainerURL object that wraps the container URL and a request
 	// pipeline to make requests.
-	ContainerURL = azblob.NewContainerURL(*URL, p)
+	containerURL = azblob.NewContainerURL(*URL, p)
 
 	// Create the container
-	Ctx = context.Background()
+	ctx = context.Background()
 }
