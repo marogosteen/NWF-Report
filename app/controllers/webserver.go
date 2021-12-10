@@ -20,9 +20,6 @@ type sample struct {
 }
 
 func StartWebServer() error {
-	// TODO
-	// services.Hoge()
-	
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
