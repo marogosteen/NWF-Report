@@ -43,7 +43,7 @@ func NewUploadModel(c *gin.Context) *UploadModel {
 	return &model
 }
 
-func (m *UploadModel) ConvertToService(s *services.UploadService) {
+func (m *UploadModel) ConvertService(s *services.UploadService) {
 	b, err := json.Marshal(s)
 	if err != nil {
 		log.Fatalln(err)

@@ -3,17 +3,12 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/nwf-report/app/models"
 	"github.com/nwf-report/services"
 )
-
-type sample struct {
-	title string
-}
 
 func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
@@ -30,31 +25,15 @@ func StartWebServer(router *gin.Engine, port string) error {
 }
 
 func homeHandler(c *gin.Context) {
-	var s services.BlobFetchService
-	s.FetchBlobList()
-	m := sample{title: "OK!"}
-	elem := reflect.ValueOf(&m).Elem()
-	size := elem.NumField()
-	viewInterface := gin.H{}
-	for i := 0; i < size; i++ {
-		field := elem.Type().Field(i).Name
-		value := elem.Field(i)
-		viewInterface[field] = value
-	}
-	c.HTML(http.StatusOK, "index.html", viewInterface)
+	var s services.ListService
+	s.Fetch()
+	var m models.ListModel
+	m.ConvertModel(s)
+	c.HTML(http.StatusOK, "index.html", m)
 }
 
 func uploadHandler(c *gin.Context) {
-	m := models.UploadModel{}
-	elem := reflect.ValueOf(&m).Elem()
-	size := elem.NumField()
-	viewInterface := gin.H{}
-	for i := 0; i < size; i++ {
-		field := elem.Type().Field(i).Name
-		value := elem.Field(i)
-		viewInterface[field] = value
-	}
-	c.HTML(http.StatusOK, "upload.html", viewInterface)
+	c.HTML(http.StatusOK, "upload.html", gin.H{})
 }
 
 func uploadPostHandler(c *gin.Context) {
@@ -67,7 +46,8 @@ func uploadPostHandler(c *gin.Context) {
 
 	m := models.NewUploadModel(c)
 	var s services.UploadService
-	m.ConvertToService(&s)
+	m.ConvertService(&s)
 	s.Upload()
+
 	c.Redirect(http.StatusFound, "/upload")
 }

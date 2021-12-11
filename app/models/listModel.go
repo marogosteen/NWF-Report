@@ -1,15 +1,26 @@
 package models
 
-import "github.com/nwf-report/app/models/partModel"
+import (
+	"regexp"
+
+	"github.com/nwf-report/services"
+)
 
 type ListModel struct {
-	ReportList []partModels.ReportModel
+	ReportList []string
 }
 
-func NewListModel() ListModel {
-	
-	m := ListModel{
+var r *regexp.Regexp
 
+func init() {
+	r = regexp.MustCompile(`.json`)
+}
+
+func (m *ListModel) ConvertModel(s services.ListService) {
+	reportList := m.ReportList
+	for _, blobname := range s.ReportList {
+		s := r.ReplaceAllString(blobname, "")
+		reportList = append(reportList, s)
 	}
-	return m
+	m.ReportList = reportList
 }
