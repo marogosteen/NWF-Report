@@ -2,20 +2,18 @@ package models
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/nwf-report/app/models/partModel"
 	"github.com/nwf-report/services"
 )
 
 type UploadModel struct {
-	Title     string
-	BestEpoch int
-	BestLoss  float64
-	Observed  [][]float64
-	Predicted [][]float64
+	ReportModel partModels.ReportModel
 }
 
 func NewUploadModel(c *gin.Context) *UploadModel {
@@ -33,22 +31,25 @@ func NewUploadModel(c *gin.Context) *UploadModel {
 	predicted := readFormFile(c, "predicted")
 
 	model := UploadModel{
-		Title:     c.PostForm("reporttitle"),
-		BestEpoch: bestEpoch,
-		BestLoss:  bestLoss,
-		Observed:  observed,
-		Predicted: predicted,
+		ReportModel: partModels.ReportModel{
+			Title:     c.PostForm("reporttitle"),
+			BestEpoch: bestEpoch,
+			BestLoss:  bestLoss,
+			Observed:  observed,
+			Predicted: predicted,
+		},
 	}
 
 	return &model
 }
 
-func (m *UploadModel) ConvertToService(s *services.UploadService) {
-	s.Title = m.Title
-	s.BestEpoch = m.BestEpoch
-	s.BestLoss = m.BestLoss
-	s.Observed = m.Observed
-	s.Predicted = m.Predicted
+func (m *UploadModel) ConvertService(s *services.UploadService) {
+	b, err := json.Marshal(s)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	s.FileName = m.ReportModel.Title + ".json"
+	s.ReportBlob = b
 }
 
 func readFormFile(c *gin.Context, formKey string) [][]float64 {

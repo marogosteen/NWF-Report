@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 
@@ -11,50 +10,40 @@ import (
 	"github.com/nwf-report/services"
 )
 
-type sample struct {
-	title string
-}
-
 func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
+
 	router.GET("/", homeHandler)
-	router.GET("/admin", adminHandler)
+	router.GET("/detail", detailHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
+
 	err := router.Run(":" + port)
+
 	return err
 }
 
 func homeHandler(c *gin.Context) {
-	m := sample{title: "OK!"}
-	elem := reflect.ValueOf(&m).Elem()
-	size := elem.NumField()
-	viewInterface := gin.H{}
-	for i := 0; i < size; i++ {
-		field := elem.Type().Field(i).Name
-		value := elem.Field(i)
-		viewInterface[field] = value
-	}
-	c.HTML(http.StatusOK, "index.html", viewInterface)
+	var s services.ListService
+	s.Fetch()
+	var m models.ListModel
+	m.ConvertModel(s)
+	c.HTML(http.StatusOK, "index.html", m)
 }
 
-func adminHandler(c *gin.Context) {
-	// TODO CaseのListView
+func detailHandler(c *gin.Context) {
+	var s services.DetailService
+	reportName := "2019"
+	s.SearchBlob(reportName)
+	var m models.DetailModel
+	m.ConvertModel(s)
+	c.HTML(http.StatusOK, "detail.html", m)
 }
 
 func uploadHandler(c *gin.Context) {
-	m := models.UploadModel{}
-	elem := reflect.ValueOf(&m).Elem()
-	size := elem.NumField()
-	viewInterface := gin.H{}
-	for i := 0; i < size; i++ {
-		field := elem.Type().Field(i).Name
-		value := elem.Field(i)
-		viewInterface[field] = value
-	}
-	c.HTML(http.StatusOK, "upload.html", viewInterface)
+	c.HTML(http.StatusOK, "upload.html", gin.H{})
 }
 
 func uploadPostHandler(c *gin.Context) {
@@ -67,7 +56,8 @@ func uploadPostHandler(c *gin.Context) {
 
 	m := models.NewUploadModel(c)
 	var s services.UploadService
-	m.ConvertToService(&s)
-	s.SampleUpload()
-	c.Redirect(http.StatusFound, "/")
+	m.ConvertService(&s)
+	s.Upload()
+
+	c.Redirect(http.StatusFound, "/upload")
 }
