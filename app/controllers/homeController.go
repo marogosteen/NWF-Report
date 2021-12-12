@@ -19,6 +19,7 @@ func StartWebServer(router *gin.Engine, port string) error {
 	router.GET("/detail/:reportname", detailHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
+	router.POST("/delete/:reportname", deletePostHandler)
 
 	err := router.Run(":" + port)
 
@@ -27,6 +28,7 @@ func StartWebServer(router *gin.Engine, port string) error {
 
 func homeHandler(c *gin.Context) {
 	var s services.ListService
+	// TODO Pager
 	s.Fetch()
 	var m models.ListModel
 	m.ConvertModel(s)
@@ -34,9 +36,9 @@ func homeHandler(c *gin.Context) {
 }
 
 func detailHandler(c *gin.Context) {
+	fileName := c.Param("reportname") + ".json"
 	var s services.DetailService
-	reportName := c.Param("reportname")
-	s.SearchBlob(reportName)
+	s.SearchBlob(fileName)
 	var m models.DetailModel
 	m.ConvertModel(s)
 	c.HTML(http.StatusOK, "detail.html", m)
@@ -57,7 +59,15 @@ func uploadPostHandler(c *gin.Context) {
 	m := models.NewUploadModel(c)
 	var s services.UploadService
 	m.ConvertService(&s)
+	// s.Upload()
 	s.Upload()
 
 	c.Redirect(http.StatusFound, "/upload")
+}
+
+func deletePostHandler(c *gin.Context) {
+	fileName := c.Param("reportname") + ".json"
+	var s services.DeleteService
+	s.Delete(fileName)
+	c.Redirect(http.StatusFound, "/")
 }

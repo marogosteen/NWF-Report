@@ -2,7 +2,6 @@ package services
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 
 	"github.com/Azure/azure-storage-blob-go/azblob"
@@ -13,8 +12,7 @@ type DetailService struct {
 }
 
 // Download 関数を使用して BLOB をダウンロードします。 BLOB の内容がバッファーに書き込まれる。
-func (s *DetailService) SearchBlob(reportName string) {
-	fileName := reportName + ".json"
+func (s *DetailService) SearchBlob(fileName string) {
 	blobURL := containerURL.NewBlockBlobURL(fileName)
 
 	// Here's how to download the blob
@@ -26,11 +24,13 @@ func (s *DetailService) SearchBlob(reportName string) {
 	// NOTE: automatically retries are performed if the connection fails
 	bodyStream := downloadResponse.Body(azblob.RetryReaderOptions{MaxRetryRequests: 20})
 
+	// TODO bodyStream.Close()
 	// read the body into a buffer
 	downloadedData := bytes.Buffer{}
 	_, err = downloadedData.ReadFrom(bodyStream)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(downloadedData.String())
+
+	s.ReportBlob = downloadedData.Bytes()
 }
