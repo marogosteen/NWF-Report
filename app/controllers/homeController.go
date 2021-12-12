@@ -16,7 +16,7 @@ func StartWebServer(router *gin.Engine, port string) error {
 	router.LoadHTMLGlob("app/views/*.html")
 
 	router.GET("/", homeHandler)
-	router.GET("/detail", detailHandler)
+	router.GET("/detail/:reportname", detailHandler)
 	router.GET("/upload", uploadHandler)
 	router.POST("/upload", uploadPostHandler)
 
@@ -35,7 +35,7 @@ func homeHandler(c *gin.Context) {
 
 func detailHandler(c *gin.Context) {
 	var s services.DetailService
-	reportName := "2019"
+	reportName := c.Param("reportname")
 	s.SearchBlob(reportName)
 	var m models.DetailModel
 	m.ConvertModel(s)
