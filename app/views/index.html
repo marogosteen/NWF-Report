@@ -69,10 +69,10 @@
                 <div class="fs-1">Report List</div>
                 <hr>
                 <a class="btn btn-primary sm-2 fs-4 mb-3" href="/upload"><i class="bi bi-plus-square"></i> upload</a>
-                
+
                 <div class="list-group">
                     {{range .ReportList}}
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="/detail/{{.}}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h4 class="mb-1">{{.}}</h3>
                         </div>
