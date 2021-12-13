@@ -7,6 +7,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="/scripts/plot.js"></script>
 
     <title>detail</title>
 </head>
@@ -28,7 +30,8 @@
                 <div class="mb-3 row">
                     <div class="col">
                         <label class="form-label fs-5">best epoch</label>
-                        <input type="text" class="form-control" name="bestepoch" placeholder="{{.ReportModel.BestEpoch}}">
+                        <input type="text" class="form-control" name="bestepoch"
+                            placeholder="{{.ReportModel.BestEpoch}}">
                     </div>
                     <div class="col">
                         <label class="form-label fs-5">best loss</label>
@@ -44,6 +47,14 @@
                 <div class="mb-3 form-group">
                     <label for="form-label" class="fs-5">predicted csv file</label>
                     <input type="file" class="form-control-file" name="predicted">
+                </div>
+
+                <div id="draw">
+                    <script>
+                        var observed = {{.ReportModel.Observed }}.flat();
+                        var predicted = {{.ReportModel.Predicted }}.flat();
+                        drawResult("draw", observed, predicted);
+                    </script>
                 </div>
 
                 <div class="row justify-content-md-end mx-1">
