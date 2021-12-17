@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -17,28 +18,35 @@ type UploadModel struct {
 }
 
 func NewUploadModel(c *gin.Context) *UploadModel {
-	bestEpoch, err := strconv.Atoi(c.PostForm("bestepoch"))
+	file, err := c.FormFile("file")
 	if err != nil {
-		// TODO 　log.Fatal()使わずに、errorはViewに返す
 		log.Fatalln(err)
 	}
-	bestLoss, err := strconv.ParseFloat(c.PostForm("bestloss"), 64)
+	fmt.Println(file.Size)
+	reader, err := file.Open()
 	if err != nil {
-		// TODO 　log.Fatal()使わずに、errorはViewに返す
 		log.Fatalln(err)
 	}
-	observed := readFormFile(c, "observed")
-	predicted := readFormFile(c, "predicted")
+	var b []byte
+	_, err = reader.Read(b)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	model := UploadModel{
-		ReportModel: partModels.ReportModel{
-			Title:     c.PostForm("reporttitle"),
-			BestEpoch: bestEpoch,
-			BestLoss:  bestLoss,
-			Observed:  observed,
-			Predicted: predicted,
-		},
+	var model UploadModel
+	err = json.Unmarshal(b, model)
+	if err != nil {
+		log.Fatalln(err)
 	}
+	// model := UploadModel{
+	// 	ReportModel: partModels.ReportModel{
+	// 		Title:     c.PostForm("reporttitle"),
+	// 		BestEpoch: bestEpoch,
+	// 		BestLoss:  bestLoss,
+	// 		Observed:  observed,
+	// 		Predicted: predicted,
+	// 	},
+	// }
 
 	return &model
 }
@@ -48,7 +56,7 @@ func (m *UploadModel) ConvertService(s *services.UploadService) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	s.FileName = m.ReportModel.Title + ".json"
+	s.FileName = m.ReportModel.CaseName + ".json"
 	s.ReportBlob = b
 }
 

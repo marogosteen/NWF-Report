@@ -60,7 +60,7 @@ func uploadPostHandler(c *gin.Context) {
 	var s services.UploadService
 	m.ConvertService(&s)
 	// s.Upload()
-	s.Upload()
+	s.SampleUpload()
 
 	c.Redirect(http.StatusFound, "/upload")
 }

@@ -24,7 +24,6 @@ func (s *DetailService) SearchBlob(fileName string) {
 	// NOTE: automatically retries are performed if the connection fails
 	bodyStream := downloadResponse.Body(azblob.RetryReaderOptions{MaxRetryRequests: 20})
 
-	// TODO bodyStream.Close()
 	// read the body into a buffer
 	downloadedData := bytes.Buffer{}
 	_, err = downloadedData.ReadFrom(bodyStream)
