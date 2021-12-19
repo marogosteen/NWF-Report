@@ -10,6 +10,10 @@ import (
 	"github.com/nwf-report/services"
 )
 
+const (
+	maxContentLenght int64 = 4 * 1024 * 1024
+)
+
 func StartWebServer(router *gin.Engine, port string) error {
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
@@ -50,7 +54,6 @@ func uploadHandler(c *gin.Context) {
 
 func uploadPostHandler(c *gin.Context) {
 	// TODO formのnil対処 viewで
-	var maxContentLenght int64 = 1024 * 1024
 	if c.Request.ContentLength > maxContentLenght {
 		// TODO Viewに返す
 		log.Fatalln("ContextLengthがmaxContentLenghtより大きい。")
@@ -59,15 +62,15 @@ func uploadPostHandler(c *gin.Context) {
 	m := models.NewUploadModel(c)
 	var s services.UploadService
 	m.ConvertService(&s)
-	// s.Upload()
-	s.SampleUpload()
+	s.Upload()
 
 	c.Redirect(http.StatusFound, "/upload")
 }
 
 func deletePostHandler(c *gin.Context) {
-	fileName := c.Param("reportname") + ".json"
+	fileName := c.Param("casename") + ".json"
 	var s services.DeleteService
 	s.Delete(fileName)
+	
 	c.Redirect(http.StatusFound, "/")
 }

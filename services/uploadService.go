@@ -26,6 +26,7 @@ func (s *UploadService) Upload() {
 	)
 }
 
+// azure blob strageにUploadせず、JsonをLocalに書き込む。
 func (s *UploadService) SampleUpload() {
 	var i map[string]interface{}
 	err := json.Unmarshal(s.ReportBlob, &i)

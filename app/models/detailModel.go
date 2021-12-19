@@ -13,7 +13,7 @@ type DetailModel struct {
 }
 
 func (m *DetailModel) ConvertModel(s services.DetailService) {
-	err := json.Unmarshal(s.ReportBlob, &m.ReportModel)
+	err := json.NewDecoder(s.Reader).Decode(&m.ReportModel)
 	if err != nil {
 		log.Fatalln(err)
 	}

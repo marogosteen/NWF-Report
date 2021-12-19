@@ -15,53 +15,92 @@
 
 <body>
     <div class="container">
-        <div class="mx-5">
+        <div class="m-5">
             <div class="my-3">
                 <h1>Detail</h1>
                 <hr>
             </div>
 
+            <div id="draw">
+                <script>
+                    var observed = {{.ReportModel.Observed }}.flat();
+                    var predicted = {{.ReportModel.Predicted }}.flat();
+                    drawResult("draw", observed, predicted);
+                </script>
+            </div>
+
             <form enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label class="form-label fs-5">learnig case title</label>
-                    <input type="text" class="form-control" name="reporttitle" placeholder="{{.ReportModel.Title}}">
+                <div class="mb-3 row">
+                    <div class="col">
+                        <label class="form-label fs-5">Learning case name</label>
+                        <input type="text" class="form-control" name="casename" placeholder="{{.ReportModel.CaseName}}">
+                    </div>
+                    <div class="col">
+                        <label class="form-label fs-5">Forecast year</label>
+                        <input type="text" class="form-control" name="targetyear"
+                            placeholder="{{.ReportModel.TargetYear}}">
+                    </div>
                 </div>
 
                 <div class="mb-3 row">
                     <div class="col">
-                        <label class="form-label fs-5">best epoch</label>
+                        <label class="form-label fs-5">Best standard deviation</label>
+                        <input type="text" class="form-control" name="beststd" placeholder="{{.ReportModel.BestStd}}">
+                    </div>
+                    <div class="col">
+                        <label class="form-label fs-5">Best epoch</label>
                         <input type="text" class="form-control" name="bestepoch"
                             placeholder="{{.ReportModel.BestEpoch}}">
                     </div>
+                </div>
+
+                <div class="mb-3 row">
                     <div class="col">
-                        <label class="form-label fs-5">best loss</label>
-                        <input type="text" class="form-control" name="bestloss" placeholder="{{.ReportModel.BestLoss}}">
+                        <label class="form-label fs-5">Batch size</label>
+                        <input type="text" class="form-control" name="batchsize"
+                            placeholder="{{.ReportModel.BatchSize}}">
+                    </div>
+                    <div class="col">
+                        <label class="form-label fs-5">Train hour</label>
+                        <input type="text" class="form-control" name="train hour"
+                            placeholder="{{.ReportModel.TrainHour}}">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col">
+                        <label class="form-label fs-5">Learning rate</label>
+                        <input type="text" class="form-control" name="leaerningrate"
+                            placeholder="{{.ReportModel.BatchSize}}">
+                    </div>
+                    <div class="col">
+                        <label class="form-label fs-5">Train hour</label>
+                        <input type="text" class="form-control" name="train hour"
+                            placeholder="{{.ReportModel.TrainHour}}">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col">
+                        <label class="form-label fs-5">Data count</label>
+                        <input type="text" class="form-control" name="datacount"
+                            placeholder="{{.ReportModel.DataCount}}">
+                    </div>
+                    <div class="col">
+                        <label class="form-label fs-5">Inferiority count</label>
+                        <input type="text" class="form-control" name="inferioritycount"
+                            placeholder="{{.ReportModel.InferiorityCount}}">
                     </div>
                 </div>
 
                 <div class="mb-3 form-group">
-                    <label for="form-label" class="fs-5">observed csv file</label>
-                    <input type="file" class="form-control-file" name="observed">
-                </div>
-
-                <div class="mb-3 form-group">
-                    <label for="form-label" class="fs-5">predicted csv file</label>
-                    <input type="file" class="form-control-file" name="predicted">
-                </div>
-
-                <div id="draw">
-                    <script>
-                        var observed = {{.ReportModel.Observed }}.flat();
-                        var predicted = {{.ReportModel.Predicted }}.flat();
-                        drawResult("draw", observed, predicted);
-                    </script>
+                    <label for="form-label" class="fs-5">Report JSON</label>
+                    <input type="file" class="form-control-file" name="file">
                 </div>
 
                 <div class="row justify-content-md-end mx-1">
-                    <button type="submit" class="btn btn-primary fs-5 col-2" formmethod="post"
-                        formaction="edit">Edit</button>
-                    <button type="submit" class="btn btn-danger btn-block fs-5 col-2" formmethod="post"
-                        formaction="/delete/{{.ReportModel.Title}}">Delete</button>
+                    <button type="submit" class="btn btn-danger fs-5 col-2" formmethod="post"
+                        formaction="/delete/{{.ReportModel.CaseName}}">Delete</button>
                 </div>
             </form>
         </div>
