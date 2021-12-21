@@ -23,9 +23,10 @@
 
             <div id="draw">
                 <script>
+                    var datetime = {{.Datetime }};
                     var observed = {{.ReportModel.Observed }}.flat();
                     var predicted = {{.ReportModel.Predicted }}.flat();
-                    drawResult("draw", observed, predicted);
+                    drawResult(datetime, observed, predicted);
                 </script>
             </div>
 

@@ -1,16 +1,16 @@
-function drawResult(drawId, observed, predicted) {
+function drawResult(datetime, observed, predicted) {
     observed = replaceWithA(observed)
     predicted = replaceWithA(predicted)
 
     var observedTrace = {
-        x: Array.from(Array(observed.length), (v, k) => k),
+        x: datetime,
         y: observed,
         type: 'scatter',
         name: "observed",
     };
 
     var predictedTrace = {
-        x: Array.from(Array(predicted.length), (v, k) => k),
+        x: datetime,
         y: predicted,
         type: 'scatter',
         name: "predicted",
@@ -20,13 +20,16 @@ function drawResult(drawId, observed, predicted) {
 
     var layout = {
         title: "title",
+        xaxis: {
+            type: 'date'
+        },
         margin: {
             t: 100,
             b: 100,
         }
     };
 
-    return Plotly.newPlot(drawId, data, layout);
+    return Plotly.newPlot("draw", data, layout);
 }
 
 
