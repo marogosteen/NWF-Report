@@ -13,7 +13,7 @@ type ReportModel struct {
 	DataCount        int
 	InferiorityCount int
 
-	Observed  [][]float64
-	Predicted [][]float64
+	Observed  []float64
+	Predicted []float64
 	// discription []byte
 }
