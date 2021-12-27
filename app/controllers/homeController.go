@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,7 +15,10 @@ const (
 	maxContentLenght int64 = 4 * 1024 * 1024
 )
 
-func StartWebServer(router *gin.Engine, port string) error {
+func StartWebServer() error {
+	router := gin.Default()
+	router.SetTrustedProxies(nil)
+
 	router.Static("/scripts", "app/views/scripts")
 	router.Static("/styles", "app/views/styles")
 	router.LoadHTMLGlob("app/views/*.html")
@@ -25,6 +29,10 @@ func StartWebServer(router *gin.Engine, port string) error {
 	router.POST("/upload", uploadPostHandler)
 	router.POST("/delete/:reportname", deletePostHandler)
 
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "8080"
+	}
 	err := router.Run(":" + port)
 
 	return err

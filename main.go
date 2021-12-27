@@ -3,16 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/nwf-report/app/controllers"
-	"github.com/nwf-report/config"
 )
 
 func main() {
-	cfg := config.Config
-	router := gin.Default()
-	err := controllers.StartWebServer(router, cfg.Port)
+	err := controllers.StartWebServer()
 	if err != nil {
 		log.Fatal(err)
 	}
