@@ -6,6 +6,6 @@ WORKDIR /src
 COPY . ./
 RUN go build
 
-EXPOSE 8080
+EXPOSE 3000:3000
 
 CMD ["./nwf-report"]

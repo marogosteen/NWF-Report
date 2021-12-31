@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +42,7 @@ func homeHandler(c *gin.Context) {
 	s.Fetch()
 	var m models.ListModel
 	m.ConvertModel(s)
-	c.HTML(http.StatusOK, "index.html", m)
+	c.HTML(200, "index.html", m)
 }
 
 func detailHandler(c *gin.Context) {
@@ -53,32 +51,52 @@ func detailHandler(c *gin.Context) {
 	s.SearchBlob(fileName)
 	var m models.DetailModel
 	m.ConvertModel(s)
-	c.HTML(http.StatusOK, "detail.html", m)
+	c.HTML(200, "detail.html", m)
 }
 
 func uploadHandler(c *gin.Context) {
-	c.HTML(http.StatusOK, "upload.html", gin.H{})
+	m := models.UploadModel{}
+	c.HTML(200, "upload.html", m)
 }
 
 func uploadPostHandler(c *gin.Context) {
-	// TODO formのnil対処 viewで
 	if c.Request.ContentLength > maxContentLenght {
-		// TODO Viewに返す
-		log.Fatalln("ContextLengthがmaxContentLenghtより大きい。")
+		model := models.UploadModel{
+			Error: "ファイルサイズは4MBまでです。",
+		}
+		c.HTML(400, "upload.html", model)
+		c.Abort()
+		return
 	}
 
-	m := models.NewUploadModel(c)
+	m, err := models.NewUploadModel(c)
+	if err != nil {
+		model := models.UploadModel{
+			Error: err.Error(),
+		}
+		c.HTML(400, "upload.html", model)
+		c.Abort()
+		return
+	}
+
 	var s services.UploadService
-	m.ConvertService(&s)
+	err = m.ConvertService(&s)
+	if err != nil {
+		model := models.UploadModel{
+			Error: err.Error(),
+		}
+		c.HTML(400, "upload.html", model)
+		c.Abort()
+		return
+	}
 	s.Upload()
 
-	c.Redirect(http.StatusFound, "/upload")
+	c.Redirect(302, "/")
 }
 
 func deletePostHandler(c *gin.Context) {
-	fileName := c.Param("casename") + ".json"
+	fileName := c.Param("reportname") + ".json"
 	var s services.DeleteService
 	s.Delete(fileName)
-	
-	c.Redirect(http.StatusFound, "/")
+	c.Redirect(302, "/")
 }
