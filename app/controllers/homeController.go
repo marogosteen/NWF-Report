@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/nwf-report/app/models"
+	"github.com/nwf-report/config"
 	"github.com/nwf-report/services"
 )
 
@@ -27,11 +26,8 @@ func StartWebServer() error {
 	router.POST("/upload", uploadPostHandler)
 	router.POST("/delete/:reportname", deletePostHandler)
 
-	port := os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "8080"
-	}
-	err := router.Run(":" + port)
+	config := config.Config
+	err := router.Run(":" + config.Port)
 
 	return err
 }

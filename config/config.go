@@ -1,30 +1,44 @@
 package config
 
 import (
-	"log"
+	"os"
 
 	"gopkg.in/ini.v1"
 )
 
 type ConfigList struct {
 	Account          string
-	Key              string
 	ConnectionString string
 	ContainerName    string
+	Key              string
+	Port             string
 }
 
 var Config ConfigList
 
 func init() {
-	cfg, err := ini.Load("config.ini")
-	if err != nil {
-		log.Fatal(err)
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "8080"
 	}
-	blobsection := cfg.Section("azureblob")
-	Config = ConfigList{
-		Account:          blobsection.Key("Account").String(),
-		Key:              blobsection.Key("Key").String(),
-		ConnectionString: blobsection.Key("ConnectionString").String(),
-		ContainerName:    blobsection.Key("ContainerName").String(),
+
+	cfg, err := ini.Load("config.ini")
+	if err == nil {
+		blobsection := cfg.Section("azureblob")
+		Config = ConfigList{
+			Account:          blobsection.Key("Account").String(),
+			ConnectionString: blobsection.Key("ConnectionString").String(),
+			ContainerName:    blobsection.Key("ContainerName").String(),
+			Key:              blobsection.Key("Key").String(),
+			Port:             port,
+		}
+	} else {
+		Config = ConfigList{
+			Account:          os.Getenv("Account"),
+			ConnectionString: os.Getenv("ConnectionString"),
+			ContainerName:    os.Getenv("ContainerName"),
+			Key:              os.Getenv("Key"),
+			Port:             port,
+		}
 	}
 }
